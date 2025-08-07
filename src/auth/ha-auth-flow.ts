@@ -214,6 +214,16 @@ export class HaAuthFlow extends LitElement {
     }
   }
 
+  private _preprocessLoginFields(schema: HaFormSchema[]) {
+    return autocompleteLoginFields(schema)
+      .filter(
+        (field) =>
+          // The store_token field is always auto-populated from the separate
+          // storeToken checkbox, and is not part of the ha-form.
+          !(field.name === "store_token" && field.type === "boolean")
+      );
+  }
+
   private _renderStep(step: DataEntryFlowStep) {
     switch (step.type) {
       case "abort":
@@ -236,7 +246,7 @@ export class HaAuthFlow extends LitElement {
             html`<ha-auth-form
               .localize=${this.localize}
               .data=${this._stepData!}
-              .schema=${autocompleteLoginFields(step.data_schema)}
+              .schema=${this._preprocessLoginFields(step.data_schema)}
               .error=${step.errors}
               .disabled=${this._submitting}
               .computeLabel=${this._computeLabelCallback(step)}
@@ -395,6 +405,13 @@ export class HaAuthFlow extends LitElement {
     this._submitting = true;
 
     const postData = { ...this._stepData, client_id: this.clientId };
+    if (
+      this.step.data_schema.find(
+        (field) => field.name === "store_token" && field.type === "boolean"
+      )
+    ) {
+      postData.store_token = this._storeToken;
+    }
 
     try {
       const response = await submitLoginFlow(this.step.flow_id, postData);
