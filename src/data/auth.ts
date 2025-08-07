@@ -53,6 +53,7 @@ export const fetchAuthProviders = () =>
 export const createLoginFlow = (
   client_id: string | undefined,
   redirect_uri: string | undefined,
+  oauth_state: string | undefined,
   handler: (string | null)[]
 ) =>
   fetch("/auth/login_flow", {
@@ -62,6 +63,7 @@ export const createLoginFlow = (
       client_id,
       handler,
       redirect_uri,
+      oauth_state,
     }),
   });
 
