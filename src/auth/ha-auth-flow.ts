@@ -265,6 +265,9 @@ export class HaAuthFlow extends LitElement {
               `
             : ""}
         `;
+      case "external":
+        document.location.assign(step.url);
+        return html`<h1>${this.localize("ui.panel.page-authorize.redirecting")}</h1>`;
       default:
         return nothing;
     }

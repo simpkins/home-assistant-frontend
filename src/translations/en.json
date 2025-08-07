@@ -8332,6 +8332,7 @@
         "who_is_logging_in": "Who is logging in?",
         "other_options": "Other login options",
         "forgot_password": "Forgot password?",
+        "redirecting": "Redirecting to external authentication server...",
         "form": {
           "working": "Please wait",
           "unknown_error": "Something went wrong",
