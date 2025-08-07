@@ -39,6 +39,8 @@ export class HaAuthorize extends litLocalizeLiteMixin(LitElement) {
 
   @state() private _error?: string;
 
+  @state() private _initialError?: string;
+
   constructor() {
     super();
     const query = extractSearchParamsObject() as AuthUrlSearchParams;
@@ -50,6 +52,15 @@ export class HaAuthorize extends litLocalizeLiteMixin(LitElement) {
     }
     if (query.state) {
       this.oauth2State = query.state;
+    }
+    if (query.error) {
+      this._initialError = query.error;
+      // Update the URL to remove the error field, since we'll let the user
+      // start a new login attempt and the error isn't relevant once we have displayed it.
+      const searchParams = new URLSearchParams(location.search);
+      searchParams.delete("error");
+      const newParams = searchParams.toString();
+      history.replaceState(null, "", `${location.pathname}?${newParams}`);
     }
   }
 
@@ -186,6 +197,7 @@ export class HaAuthorize extends litLocalizeLiteMixin(LitElement) {
                 .authProvider=${this._authProvider}
                 .localize=${this.localize}
                 .initStoreToken=${this._preselectStoreToken}
+                .initialError=${this._initialError}
               ></ha-auth-flow>
               ${inactiveProviders!.length > 0
                 ? html`

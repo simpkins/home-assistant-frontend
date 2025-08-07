@@ -42,6 +42,8 @@ export class HaAuthFlow extends LitElement {
 
   @property({ attribute: false }) public initStoreToken = false;
 
+  @property({ attribute: false }) public initialError?: string;
+
   @state() private _storeToken = false;
 
   @state() private _state: State = "loading";
@@ -135,6 +137,11 @@ export class HaAuthFlow extends LitElement {
       this._state = "error";
       this._errorMessage = this._unknownError();
       return;
+    }
+
+    if (this.initialError) {
+      this._state = "error";
+      this._errorMessage = this.initialError;
     }
 
     this.addEventListener("keypress", (ev) => {
@@ -267,7 +274,9 @@ export class HaAuthFlow extends LitElement {
         `;
       case "external":
         document.location.assign(step.url);
-        return html`<h1>${this.localize("ui.panel.page-authorize.redirecting")}</h1>`;
+        return html`<h1>
+          ${this.localize("ui.panel.page-authorize.redirecting")}
+        </h1>`;
       default:
         return nothing;
     }
@@ -290,6 +299,17 @@ export class HaAuthFlow extends LitElement {
       console.error("No auth provider");
       this._state = "error";
       this._errorMessage = this._unknownError();
+      return;
+    }
+
+    if (this.initialError) {
+      // We have an error from a previous login attempt to display and are
+      // just setting up the page after loading the auth provider list.
+      // Keep showing this error until the user hits the "Start over" button:
+      // Don't change this._state or this._errorMessage, but clear
+      // this.initialError so that we will create a new login flow if the user
+      // explicitly selects a new auth provider or runs _startOver().
+      this.initialError = null;
       return;
     }
 
