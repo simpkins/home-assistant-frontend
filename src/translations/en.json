@@ -8414,6 +8414,19 @@
                 "login_expired": "[%key:ui::panel::page-authorize::form::providers::homeassistant::abort::login_expired%]"
               }
             },
+            "oidc": {
+              "step": {
+                "auth_request": {
+                  "data": {
+                    "provider": "Log in with OpenID"
+                  }
+                }
+              },
+              "error": {
+                "no_callback_url": "Unable to determine Home Assistant URL",
+                "provider_error": "Bad data received from OpenID Provider"
+              }
+            },
             "trusted_networks": {
               "step": {
                 "init": {
